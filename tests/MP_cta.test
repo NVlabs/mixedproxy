@@ -1,0 +1,42 @@
+.global x;
+.texref t virtually aliases x;
+.surfref s virtually aliases x;
+.global flag;
+
+d0.b0.t0 {
+  $0, 2;
+  $1
+  st.release.cta [flag], 1;
+}
+
+d0.b0.t1 {
+  ld.acquire.cta r0, [flag] == 1;
+  $2
+  $3 r1, $4;
+}
+
+$5(r1 $6 2) as r1; 
+
+$$
+
+st   [x] |                                           |                                           | ld   | [x] | assert | ==
+st   [x] |                                           |                                           | suld | [s] | permit | !=
+sust [s] |                                           |                                           | ld   | [x] | permit | !=
+sust [s] |                                           |                                           | suld | [s] | assert | ==
+
+st   [x] | fence.proxy.surface;                      |                                           | suld | [s] | assert | ==
+sust [s] | fence.proxy.surface;                      |                                           | ld   | [x] | assert | ==
+sust [s] | fence.proxy.surface;                      |                                           | tld  | [t] | permit | !=
+sust [s] | fence.proxy.texture;                      |                                           | tld  | [t] | permit | !=
+sust [s] | fence.proxy.texture; fence.proxy.surface; |                                           | tld  | [t] | permit | !=
+sust [s] | fence.proxy.surface; fence.proxy.texture; |                                           | tld  | [t] | assert | ==
+
+sust [s] | fence.proxy.texture;                      | fence.proxy.surface;                      | tld  | [t] | permit | !=
+sust [s] | fence.proxy.surface;                      | fence.proxy.texture;                      | tld  | [t] | assert | ==
+
+st   [x] |                                           | fence.proxy.surface;                      | suld | [s] | assert | ==
+sust [s] |                                           | fence.proxy.surface;                      | ld   | [x] | assert | ==
+sust [s] |                                           | fence.proxy.surface;                      | tld  | [t] | permit | !=
+sust [s] |                                           | fence.proxy.texture;                      | tld  | [t] | permit | !=
+sust [s] |                                           | fence.proxy.texture; fence.proxy.surface; | tld  | [t] | permit | !=
+sust [s] |                                           | fence.proxy.surface; fence.proxy.texture; | tld  | [t] | assert | ==

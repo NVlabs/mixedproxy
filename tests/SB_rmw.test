@@ -1,0 +1,14 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  atom.add.acq_rel.gpu r1, [x], 1;
+  atom.add.acq_rel.gpu r2, [y], 1;
+}
+
+d0.b1.t0 {
+  atom.add.acq_rel.gpu r3, [y], 1;
+  atom.add.acq_rel.gpu r4, [x], 1;
+}
+
+assert (r2 != 0 || r4 != 0) as r2_r4;

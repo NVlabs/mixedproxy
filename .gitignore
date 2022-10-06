@@ -1,0 +1,4 @@
+java/*.class
+alloy/*.class
+alloy/org.alloytools.alloy.dist.jar
+nvlitmus/__pycache__/

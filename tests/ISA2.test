@@ -1,0 +1,20 @@
+.global x;
+.global flag1;
+.global flag2;
+
+d0.b0.t0 {
+  st [x], 42;
+  st.release.cta [flag1], 1;
+}
+
+d0.b0.t1 {
+  ld.acquire.cta r0, [flag1] == 1;
+  st.release.gpu [flag2], 1;
+}
+
+d0.b1.t0 {
+  ld.acquire.gpu r1, [flag2] == 1;
+  ld r2, [x];
+}
+
+assert (r2 == 42) as outcome;

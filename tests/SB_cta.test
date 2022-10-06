@@ -1,0 +1,16 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  st [x], 1;
+  fence.sc.cta;
+  ld r0, [y];
+}
+
+d0.b0.t1 {
+  st [y], 2;
+  fence.sc.cta;
+  ld r1, [x];
+}
+
+assert (r0 == 2 || r1 == 1) as my_test;

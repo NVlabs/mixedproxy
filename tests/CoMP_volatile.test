@@ -1,0 +1,13 @@
+.global x;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  st.volatile [x], 2;
+}
+
+d0.b1.t0 {
+  ld.weak r0, [x] == 2;
+  ld.volatile r1, [x];
+}
+
+permit(r1 != 2) as check_r1;

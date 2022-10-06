@@ -1,0 +1,61 @@
+.global x;
+.global y physically aliases x;
+.surfref c virtually aliases x;
+.surfref s virtually aliases y;
+.texref t virtually aliases y;
+.global flag;
+
+d0.b0.t0 {
+  $0, 2;
+  $1
+  st.release.gpu [flag], 1;
+}
+
+d0.b1.t0 {
+  ld.acquire.gpu r0, [flag] == 1;
+  $2
+  $3 r1, $4;
+}
+
+$5(r1 $6 2) as r1; 
+
+$$
+
+st   [x] |                                           |                                           | ld   | [y] | permit | !=
+st   [x] |                                           |                                           | suld | [s] | permit | !=
+sust [c] |                                           |                                           | ld   | [y] | permit | !=
+sust [c] |                                           |                                           | suld | [s] | permit | !=
+
+st   [x] | fence.proxy.surface;                      |                                           | suld | [s] | permit | !=
+sust [c] | fence.proxy.surface;                      |                                           | ld   | [y] | permit | !=
+sust [c] | fence.proxy.surface;                      |                                           | tld  | [t] | permit | !=
+sust [c] | fence.proxy.texture;                      |                                           | tld  | [t] | permit | !=
+sust [c] | fence.proxy.texture; fence.proxy.surface; |                                           | tld  | [t] | permit | !=
+sust [c] | fence.proxy.surface; fence.proxy.texture; |                                           | tld  | [t] | permit | !=
+
+sust [c] | fence.proxy.texture;                      | fence.proxy.surface;                      | tld  | [t] | permit | !=
+sust [c] | fence.proxy.surface;                      | fence.proxy.texture;                      | tld  | [t] | permit | !=
+
+st   [x] |                                           | fence.proxy.surface;                      | suld | [s] | permit | !=
+sust [c] |                                           | fence.proxy.surface;                      | ld   | [y] | permit | !=
+sust [c] |                                           | fence.proxy.surface;                      | tld  | [t] | permit | !=
+sust [c] |                                           | fence.proxy.texture;                      | tld  | [t] | permit | !=
+sust [c] |                                           | fence.proxy.texture; fence.proxy.surface; | tld  | [t] | permit | !=
+sust [c] |                                           | fence.proxy.surface; fence.proxy.texture; | tld  | [t] | permit | !=
+
+
+st   [x] | fence.proxy.alias;                        |                                           | ld   | [y] | assert | ==
+st   [x] |                                           | fence.proxy.alias;                        | ld   | [y] | assert | ==
+
+sust [c] | fence.proxy.alias; fence.proxy.surface;   |                                           | ld   | [y] | permit | !=
+sust [c] | fence.proxy.surface; fence.proxy.alias;   |                                           | ld   | [y] | assert | ==
+sust [c] | fence.proxy.surface;                      | fence.proxy.alias;                        | ld   | [y] | assert | ==
+
+sust [c] | fence.proxy.alias; fence.proxy.surface;   | fence.proxy.texture;                      | tld  | [t] | permit | !=
+sust [c] | fence.proxy.surface; fence.proxy.alias;   | fence.proxy.texture;                      | tld  | [t] | assert | ==
+sust [c] | fence.proxy.surface;                      | fence.proxy.alias; fence.proxy.texture;   | tld  | [t] | assert | ==
+sust [c] | fence.proxy.surface;                      | fence.proxy.texture; fence.proxy.alias;   | tld  | [t] | permit | !=
+
+st   [x] | fence.proxy.alias;                        | fence.proxy.surface;                      | suld | [s] | assert | ==
+st   [x] |                                           | fence.proxy.alias; fence.proxy.surface;   | suld | [s] | assert | ==
+st   [x] |                                           | fence.proxy.surface; fence.proxy.alias;   | suld | [s] | permit | !=

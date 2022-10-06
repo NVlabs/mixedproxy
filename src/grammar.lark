@@ -1,0 +1,121 @@
+start : addresses threads commands
+
+
+addresses: address_decl*
+
+address_decl: "." space     string (/physically/ "aliases" string)? ";"
+            | "." /texref/  string  /virtually/  "aliases" string   ";"
+            | "." /surfref/ string  /virtually/  "aliases" string   ";"
+
+!space: "global" | "shared"
+
+aliases: "[" string ("," string)* "]"
+
+
+threads: thread+
+
+thread : thread_scope_tree "{" instruction+ "}"
+
+?instruction: load
+            | store
+            | atom
+            | red
+            | fence
+            | proxy_fence
+            | alias_fence
+
+load       : /ld/       sem scope reg "," address return_value ";"
+           | /tld/      weak none reg "," address return_value ";"
+           | /suld/     sem scope reg "," address return_value ";"
+           | /ldc/      weak none reg "," address return_value ";"
+
+store      : /st/       sem scope address "," value ";"
+           | /sust/     sem scope address "," value ";"
+
+atom       : /atom/     "." atomic_op sem scope reg "," address "," value return_value ";"
+           | /suatom/   "." atomic_op sem scope reg "," address "," value return_value ";"
+                                     
+red        : /red/      "." atomic_op sem scope address "," value ";"
+           | /sured/    "." atomic_op sem scope address "," value ";"
+                                     
+fence      : /fence/    sem scope ";"
+
+proxy_fence: /fence/    "." "proxy" "." string ("." string)* ";"
+
+alias_fence: /fence/    "." "alias" ";"
+
+?address: "[" string "]"
+
+
+!sem: "." "weak"
+    | "." "relaxed"
+    | "." "acquire"
+    | "." "release"
+    | "." "acq_rel"
+    | "." "sc"
+    | "." "volatile"
+    | none
+
+!scope: "." "cta"
+      | "." "gpu"
+      | "." "sys"
+      | none
+
+!weak: "." "weak"
+     | none
+
+?none:
+
+
+?value: integer | reg
+
+integer: num
+
+return_value: ("==" integer)?
+
+
+!atomic_op: "add"
+
+
+scope_tree: "d" num
+          | "d" num "." "b" num
+          | "d" num "." "b" num "." "t" num
+
+thread_scope_tree: "d" num "." "b" num "." "t" num
+
+
+reg: "r" num
+
+
+commands: command*
+
+command: "check"  "(" condition ")" "as" string ";" -> check
+       | "permit" "(" condition ")" "as" string ";" -> permit
+       | "assert" "(" condition ")" "as" string ";" -> assert_
+
+condition: condition_and
+         | condition "||" condition -> or_
+
+?condition_and: condition_eq
+             | condition_and "&&" condition_and -> and_
+
+condition_eq: value "==" value -> eq
+            | value "!=" value -> neq
+            | "not" condition -> not_
+
+value_list: value
+          | "{" value ("or" value)* "}"
+
+
+?string: CNAME
+
+num: INT
+
+%import common.INT
+%import common.CNAME
+%import common.WS
+
+%ignore WS
+
+COMMENT: "//" /[^\n]/*
+%ignore COMMENT

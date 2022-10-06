@@ -1,0 +1,14 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  atom.add.acq_rel.gpu r1, [x], 1;
+  atom.add.acq_rel.gpu r2, [y], 1;
+}
+
+d0.b1.t0 {
+  st.relaxed.gpu [y], 1;
+  ld.relaxed.gpu r3, [x];
+}
+
+permit (r2 == 0 && r3 == 0) as r2_r3;
