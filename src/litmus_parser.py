@@ -65,7 +65,10 @@ class Transformer(lark.Transformer):
                     meta,
                     f"illegal encoding: .{sem} accesses should not have scope",
                 )
+        if sem == "volatile":
             return "relaxed", "sys"
+        elif sem == "weak":
+            return "weak", None
         else:
             return sem, scope
 
