@@ -129,8 +129,12 @@ pred no_thin_air {
   acyclic[rf + dep]
 }
 
+pred sc_per_location {
+  acyclic[strong[com] + po_loc]
+}
+
 pred ptx_mm {
-  no_thin_air and atomicity and coherence and causality and seq_cst
+  no_thin_air and atomicity and coherence and causality and seq_cst and sc_per_location
 }
 
 
