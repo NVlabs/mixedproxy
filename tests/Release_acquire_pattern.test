@@ -1,0 +1,16 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  st.weak [y], 1;
+  st.release.sys [x], 1;
+  st.relaxed.sys [x], 2;
+}
+
+d0.b1.t0 {
+  ld.relaxed.sys r1, [x];
+  fence.acq_rel.sys;
+  ld.weak r3, [y];
+}
+
+permit (r1 == 2 && r3 == 0) as my_test;

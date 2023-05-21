@@ -143,12 +143,12 @@ fun cause : Op->Op {
 }
 
 fun sync : Op->Op {
-  release_sequence.^observation.acquire_sequence
+  strong[release_sequence.^observation.acquire_sequence]
 }
 
 fun release_sequence : Op->Op {
-  (WriteRelease <: optional[po_loc] :> Write)
-  + (ReleaseFences <: ^po :> Write)
+  strong[WriteRelease <: optional[po_loc] :> Write]
+  + strong[ReleaseFences <: ^po :> Write]
 }
 
 /* There are two definitions: the original version was the raw definition
@@ -162,8 +162,8 @@ fun observation : Op->Op {
 // fact { observation.rmw.observation in observation }
 
 fun acquire_sequence : Op->Op {
-  (Read <: optional[po_loc] :> ReadAcquire)
-  /* 2) A Read followed by an AcquireFence (or greater) */
+  strong[Read <: optional[po_loc] :> ReadAcquire]
+  + strong[Read <: ^po :> AcquireFences]
 }
 
 ////////////////////////////////////////////////////////////////////////////////
