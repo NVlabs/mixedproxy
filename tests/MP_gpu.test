@@ -1,6 +1,7 @@
 .global x;
 .texref t virtually aliases x;
 .surfref s virtually aliases x;
+.conref c virtually aliases x;
 .global flag;
 
 d0.b0.t0 {
@@ -21,10 +22,12 @@ $$
 
 st   [x] |                                           |                                           | ld   | [x] | assert | ==
 st   [x] |                                           |                                           | suld | [s] | permit | !=
+st   [x] |                                           |                                           | ldc  | [c] | permit | !=
 sust [s] |                                           |                                           | ld   | [x] | permit | !=
 sust [s] |                                           |                                           | suld | [s] | permit | !=
 
 st   [x] | fence.proxy.surface;                      |                                           | suld | [s] | permit | !=
+st   [x] | fence.proxy.constant;                     |                                           | ldc  | [c] | permit | !=
 sust [s] | fence.proxy.surface;                      |                                           | ld   | [x] | assert | ==
 sust [s] | fence.proxy.surface;                      |                                           | tld  | [t] | permit | !=
 sust [s] | fence.proxy.texture;                      |                                           | tld  | [t] | permit | !=

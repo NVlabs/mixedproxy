@@ -1,6 +1,7 @@
 .global x;
 .texref t virtually aliases x;
 .surfref s virtually aliases x;
+.conref c virtually aliases x;
 .global flag;
 
 d0.b0.t0 {
@@ -25,18 +26,24 @@ sust [s] |                                           |                          
 sust [s] |                                           |                                           | suld | [s] | assert | ==
 
 st   [x] | fence.proxy.surface;                      |                                           | suld | [s] | assert | ==
+st   [x] | fence.proxy.constant;                     |                                           | ldc  | [c] | assert | ==
+st   [x] |                                           | fence.proxy.constant;                     | ldc  | [c] | assert | ==
 sust [s] | fence.proxy.surface;                      |                                           | ld   | [x] | assert | ==
 sust [s] | fence.proxy.surface;                      |                                           | tld  | [t] | permit | !=
 sust [s] | fence.proxy.texture;                      |                                           | tld  | [t] | permit | !=
 sust [s] | fence.proxy.texture; fence.proxy.surface; |                                           | tld  | [t] | permit | !=
 sust [s] | fence.proxy.surface; fence.proxy.texture; |                                           | tld  | [t] | assert | ==
+sust [s] | fence.proxy.surface; fence.proxy.constant;|                                           | ldc  | [c] | assert | ==
 
 sust [s] | fence.proxy.texture;                      | fence.proxy.surface;                      | tld  | [t] | permit | !=
 sust [s] | fence.proxy.surface;                      | fence.proxy.texture;                      | tld  | [t] | assert | ==
+sust [s] | fence.proxy.constant;                     | fence.proxy.surface;                      | ldc  | [c] | permit | !=
+sust [s] | fence.proxy.surface;                      | fence.proxy.constant;                     | ldc  | [c] | assert | ==
 
 st   [x] |                                           | fence.proxy.surface;                      | suld | [s] | assert | ==
 sust [s] |                                           | fence.proxy.surface;                      | ld   | [x] | assert | ==
 sust [s] |                                           | fence.proxy.surface;                      | tld  | [t] | permit | !=
 sust [s] |                                           | fence.proxy.texture;                      | tld  | [t] | permit | !=
+sust [s] |                                           | fence.proxy.constant;                     | ldc  | [c] | permit | !=
 sust [s] |                                           | fence.proxy.texture; fence.proxy.surface; | tld  | [t] | permit | !=
 sust [s] |                                           | fence.proxy.surface; fence.proxy.texture; | tld  | [t] | assert | ==
