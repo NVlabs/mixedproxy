@@ -6,6 +6,7 @@ addresses: address_decl*
 address_decl: "." space     string (/physically/ "aliases" string)? ";"
             | "." /texref/  string  /virtually/  "aliases" string   ";"
             | "." /surfref/ string  /virtually/  "aliases" string   ";"
+            | "." /conref/  string  /virtually/  "aliases" string   ";"
 
 !space: "global" | "shared"
 
