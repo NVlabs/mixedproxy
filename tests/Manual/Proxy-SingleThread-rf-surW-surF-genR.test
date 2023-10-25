@@ -1,0 +1,11 @@
+.global x;
+.texref t virtually aliases x;
+.surfref s virtually aliases x;
+
+d0.b0.t0 {
+  sust.weak [s], 1;
+  fence.proxy.surface;
+  ld.weak r0, [x];
+}
+
+assert (r0 == 1) as proxy_alias;

@@ -1,0 +1,21 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  fence.sc.gpu;
+  st.weak [x], 2;
+  fence.sc.gpu;
+  ld.weak r1, [y];
+
+}
+
+d0.b1.t0 {
+  st.weak [y], 1;
+  fence.sc.gpu;
+  st.weak [y], 2;
+  fence.sc.gpu;
+  ld.weak r2, [x];
+}
+
+permit (r1 == 2 || r2 == 2) as SB_sc_gpu_multiFence;

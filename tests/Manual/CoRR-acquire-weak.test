@@ -1,0 +1,12 @@
+.global x;
+
+d0.b0.t0 {
+  st.release.gpu [x], 1;
+}
+
+d0.b1.t0 {
+  ld.acquire.gpu r1, [x];
+  ld.weak r2, [x];
+}
+
+assert (r1 != 1 || r2 != 0) as CoRR_acquire_weak;

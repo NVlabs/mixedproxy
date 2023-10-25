@@ -1,0 +1,12 @@
+.global x;
+
+d0.b0.t0 {
+  atom.add.acq_rel.cta r0, [x], 1;
+}
+
+d0.b1.t0 {
+  atom.add.acq_rel.cta r1, [x], 1;
+  ld.acquire.cta r2, [x];
+}
+
+permit (r2 == 1) as r2_atom;

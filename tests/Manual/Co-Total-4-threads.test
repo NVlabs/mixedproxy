@@ -1,0 +1,27 @@
+.global x;
+.global f1;
+.global f2;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  st.release.sys [f1], 1;
+}
+
+d0.b0.t1 {
+  st.weak [x], 2;
+  st.release.sys [f2], 1;
+}
+
+d0.b0.t2 {
+  ld.acquire.sys r0, [f1];
+  ld.acquire.sys r1, [f2];
+  ld.weak r2, [x];
+}
+
+d0.b0.t3 {
+  ld.acquire.sys r3, [f1];
+  ld.acquire.sys r4, [f2];
+  ld.weak r5, [x];
+}
+
+permit(r0 == 1 && r1 == 1 && r2 == 1 && r3 == 1 && r4 == 1 && r5 == 2) as co_total_4_threads;

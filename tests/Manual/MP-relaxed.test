@@ -1,0 +1,14 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  st.release.sys [x], 1;
+  st.release.sys [y], 1;
+}
+
+d0.b0.t1 {
+  ld.relaxed.sys r1, [y];
+  ld.acquire.gpu r2, [x];
+}
+
+permit (r1 == 1 && r2 != 1) as mp_relaxed;

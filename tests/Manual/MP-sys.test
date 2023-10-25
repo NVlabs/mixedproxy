@@ -1,0 +1,14 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  st.release.sys [y], 1;
+}
+
+d0.b0.t1 {
+  ld.acquire.sys r1, [y];
+  ld.weak r2, [x];
+}
+
+assert (r1 != 1 || r2 == 1) as mp_sys;

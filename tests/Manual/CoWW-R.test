@@ -1,0 +1,9 @@
+.global x;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  st.weak [x], 2;
+  ld.acquire.sys r1, [x];
+}
+
+assert (r1 != 1) as CoWW_R;
