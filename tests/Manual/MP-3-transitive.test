@@ -1,0 +1,21 @@
+// Adapted from Figure 6 of paper: Heterogeneous-race-free Memory Models
+.global x;
+.global y;
+.global z;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  st.release.cta [y], 1;
+}
+
+d0.b0.t0 {
+  ld.acquire.cta r0, [y] == 1;
+  st.release.gpu [z], 1;
+}
+
+d0.b1.t0 {
+  ld.acquire.gpu r1, [z] == 1;
+  ld.weak r2, [x];
+}
+
+assert (r2 == 1) as mp_transitive;

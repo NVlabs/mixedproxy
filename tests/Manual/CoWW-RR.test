@@ -1,0 +1,13 @@
+.global x;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  st.weak [x], 2;
+}
+
+d0.b0.t1 {
+  ld.weak r0, [x];
+  ld.weak r1, [x];
+}
+
+permit(r0 == 2 && r1 ==1) as check_co;

@@ -1,0 +1,16 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  fence.sc.gpu;
+  ld.weak r0, [y];
+}
+
+d0.b1.t0 {
+  st.weak [y], 1;
+  fence.sc.gpu;
+  ld.weak r1, [x];
+}
+
+assert (r0 == 1 || r1 == 1) as SB_acq_rel_cta;

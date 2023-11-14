@@ -1,0 +1,13 @@
+.global x;
+
+d0.b0.t0 {
+  st.release.gpu [x], 1;
+}
+
+d0.b1.t0 {
+  st.release.sys [x], 2;
+  ld.weak r1, [x];
+  ld.weak r2, [x];
+}
+
+permit (r1 == 1 && r2 == 1) as CoWR_R;

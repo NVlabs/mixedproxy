@@ -1,0 +1,16 @@
+.global x;
+.global y;
+
+d0.b0.t0 {
+  st.release.cta [x], 1;
+  fence.acq_rel.cta;
+  ld.acquire.cta r1, [y];
+}
+
+d0.b0.t1 {
+  st.release.cta [y], 1;
+  fence.acq_rel.cta;
+  ld.acquire.cta r2, [x];
+}
+
+permit (r1 == 1 && r2 == 0) as SB_acq_rel_cta;

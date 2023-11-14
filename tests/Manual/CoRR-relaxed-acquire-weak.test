@@ -1,0 +1,14 @@
+.global x;
+
+d0.b0.t0 {
+  st.release.gpu [x], 1;
+  st.release.gpu [x], 2;
+}
+
+d0.b1.t0 {
+  ld.relaxed.gpu r1, [x];
+  ld.acquire.gpu r2, [x];
+  ld.weak r3, [x];
+}
+
+permit (r1 == 2 || r3 == 1) as CoRR_relaxed_acquire_weak;

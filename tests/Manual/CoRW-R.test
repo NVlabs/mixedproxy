@@ -1,0 +1,13 @@
+.global x;
+
+d0.b0.t0 {
+  st.release.sys [x], 1;
+}
+
+d0.b1.t0 {
+  ld.acquire.sys r1, [x];
+  st.weak [x], 2;
+  ld.weak r2, [x];
+}
+
+assert (r1 != 1 || r2 != 1) as CoRW_R;

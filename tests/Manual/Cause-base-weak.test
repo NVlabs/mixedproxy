@@ -1,0 +1,22 @@
+.global x;
+.global f1;
+.global f2;
+
+d0.b0.t0 {
+  st.weak [x], 1;
+  st.release.sys [f1], 1;
+}
+
+d0.b1.t0 {
+  ld.acquire.gpu r1, [x];
+  st.weak [x], 2;
+  st.release.sys [f2], 1;
+}
+
+d0.b2.t0 {
+  ld.acquire.sys r2, [f2];
+  ld.acquire.sys r3, [f2];
+  ld.weak r4, [x];
+}
+
+permit(r1 == 1 && r2 == 1 && r3 == 1 && r4 == 1) as check_cause_base_weak;

@@ -1,0 +1,10 @@
+.global x;
+.global y physically aliases x;
+
+d0.b0.t0 {
+  st.weak [x], 42;
+  fence.proxy.alias;
+  ld.weak r0, [y];
+}
+
+assert (r0 == 42) as proxy_alias;

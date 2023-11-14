@@ -1,0 +1,22 @@
+// Test if t2 and t3 can read updates to x in conflicting order
+.global x;
+
+d0.b0.t0 {
+  st.relaxed.sys [x], 1;
+}
+
+d0.b0.t1 {
+  st.relaxed.sys [x], 2;
+}
+
+d0.b0.t2 {
+  ld.acquire.sys r0, [x];
+  ld.acquire.sys r1, [x];
+}
+
+d0.b0.t3 {
+  ld.acquire.sys r2, [x];
+  ld.acquire.sys r3, [x];
+}
+
+assert(r0 != 1 || r1 != 2 || r2 != 2 || r3 != 1) as coherence;
